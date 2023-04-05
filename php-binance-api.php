@@ -1377,13 +1377,27 @@ class API
         }
 
         $output = curl_exec($curl);
-        // Check if any error occurred
+
         if (curl_errno($curl) > 0) {
-            // should always output error, not only on httpdebug
-            // not outputing errors, hides it from users and ends up with tickets on github
-            throw new \Exception('Curl error: ' . curl_error($curl));
+          $curlErrorNumber = curl_errno($curl);
+          $curlErrorMessage = curl_error($curl);
+          $errorContext = [
+            'url' => $url,
+            'method' => $method,
+            'params' => $params
+          ];
+
+          throw new \Exception(
+            sprintf(
+              'cURL error %d: %s. Context: %s',
+              $curlErrorNumber,
+              $curlErrorMessage,
+              json_encode($errorContext)
+            ),
+            $curlErrorNumber
+          );
         }
-    
+
         $header_size = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
         $header = $this->get_headers_from_curl_response($output);
         $output = substr($output, $header_size);
