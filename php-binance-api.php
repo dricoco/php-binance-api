@@ -603,6 +603,25 @@ class API
     }
 
     /**
+     * order information for a trade 
+     *
+     * $BNBHistory = $api->history("BNBBTC");
+     * $limitBNBHistory = $api->history("BNBBTC",5);
+     *
+     * @param $symbol string the currency symbol
+     * @param $Order Id of the order
+     * @throws \Exception
+     */
+    public function trade(string $symbol, int $orderId)
+    {
+        $parameters = [
+            "symbol" => $symbol,
+            "orderId" => $orderId,
+        ];
+        return $this->httpRequest("v3/myTrades", "GET", $parameters, true);
+    }
+
+    /**
      * useServerTime adds the 'useServerTime'=>true to the API request to avoid time errors
      *
      * $api->useServerTime();
